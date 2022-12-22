@@ -43,7 +43,7 @@ model Word {
   notes Note[]
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String @unique
+  userId String
 
   createdBy String
   createdAt DateTime @default(now())
@@ -60,7 +60,7 @@ model Note {
   wordId String
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String @unique
+  userId String
 
   createdBy String
   createdAt DateTime @default(now())

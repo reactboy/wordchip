@@ -1,12 +1,9 @@
 import { Outlet } from "@remix-run/react";
 
-export default function() {
+export default function () {
   return (
-    <>
-      word
-      <div>
-        <Outlet />
-      </div>
-    </>
+    <div>
+      <Outlet />
+    </div>
   );
 }

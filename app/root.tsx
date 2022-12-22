@@ -6,7 +6,7 @@ import {
   Meta,
   Outlet,
   Scripts,
-  ScrollRestoration
+  ScrollRestoration,
 } from "@remix-run/react";
 import styles from "./tailwind.css";
 
@@ -19,28 +19,28 @@ export const links: LinksFunction = () => {
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
   title: "wordchips",
-  viewport: "width=device-width,initial-scale=1"
+  viewport: "width=device-width,initial-scale=1",
 });
 
 export async function loader({ request }: LoaderArgs) {
   return json({
-    user: await getUser(request)
+    user: await getUser(request),
   });
 }
 
 export default function App() {
   return (
     <html lang="en" className="h-full">
-    <head>
-      <Meta />
-      <Links />
-    </head>
-    <body className="h-full bg-blue-100">
-    <Outlet />
-    <ScrollRestoration />
-    <Scripts />
-    <LiveReload />
-    </body>
+      <head>
+        <Meta />
+        <Links />
+      </head>
+      <body className="h-full bg-blue-50">
+        <Outlet />
+        <ScrollRestoration />
+        <Scripts />
+        <LiveReload />
+      </body>
     </html>
   );
-};
+}
