@@ -22,6 +22,9 @@ export const getWord = async (wordId: Word["id"]): Promise<Word | null> => {
     where: {
       id: wordId,
     },
+    include: {
+      notes: true,
+    },
   });
 };
 

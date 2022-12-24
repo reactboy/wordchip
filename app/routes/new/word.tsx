@@ -16,8 +16,6 @@ const validator = withZod(
 
 export const action: ActionFunction = async ({ request }) => {
   const data = await validator.validate(await request.formData());
-  console.log(data.error);
-  console.log(data);
   if (data.error) return validationError(data.error);
   const {
     data: { title, description },
@@ -49,8 +47,8 @@ export default function WordNewView() {
   const { user } = useLoaderData();
   console.log(user);
   return (
-    <div className="w-1/2 mx-auto bg-neutral-50 rounded-xl p-4">
-      <p className="text-2xl text-slate-600 font-bold">Create Word</p>
+    <div className="w-1/2 mx-auto bg-blue-100 rounded-sm p-4">
+      <p className="text-2xl text-blue-500 font-bold">Create Word</p>
       <ValidatedForm validator={validator} method="post">
         <div className="flex flex-col gap-4 mt-2">
           <FormInput name="title" />

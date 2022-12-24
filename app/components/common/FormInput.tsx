@@ -11,7 +11,7 @@ export const FormInput: FC<FormInputProps> = (props) => {
     <div>
       {label && <label className="block">{label}</label>}
       <input
-        className="w-full p-1 text-slate-600 font-bold rounded-md text-xl focus:outline-none focus:ring"
+        className="w-full p-1 bg-blue-50 text-blue-900 rounded-sm text-xl focus:outline-none focus:ring placeholder:text-blue-200"
         name={name}
         placeholder={name}
       />

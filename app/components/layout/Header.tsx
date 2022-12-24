@@ -15,13 +15,13 @@ export const Header: FC<HeaderProps> = (props) => {
 
   return (
     <>
-      <div className="flex justify-between items-center px-4 py-2 bg-slate-900">
-        <h1 className="text-neutral-50 text-xl font-bold">wordchip</h1>
+      <div className="flex justify-between items-center px-4 py-2 bg-blue-100">
+        <h1 className="text-blue-500 text-xl font-bold">wordchip</h1>
         {user && (
           <div className="gap-2 flex items-center">
-            <p className="text-neutral-200">{user.username}</p>
+            <p className="text-blue-500">{user.username}</p>
             <button
-              className="text-slate-400 px-2 py-1 rounded-lg hover:text-neutral-50 hover:bg-slate-800 transition"
+              className="text-red-400 px-2 py-1 rounded-lg hover:text-red-500 hover:bg-blue-50 transition"
               onClick={onClickLogout}
             >
               Logout

@@ -55,6 +55,7 @@ model Note {
   id String @id @default(cuid())
 
   body String
+  kind String @default("note")
 
   word   Word   @relation(fields: [wordId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   wordId String
