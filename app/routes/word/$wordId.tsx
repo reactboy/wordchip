@@ -2,14 +2,14 @@ import { ActionFunction, LoaderFunction, redirect } from "@remix-run/router";
 import { getWord } from "~/domain/word/word.server";
 import { useLoaderData, useNavigate, useSubmit } from "@remix-run/react";
 import { Note, Word } from "@prisma/client";
-import { Button, FormInput } from "~/components/common";
-import { ValidatedForm, validationError } from "remix-validated-form";
 import { z } from "zod";
+import invariant from "tiny-invariant";
+import { ValidatedForm, validationError } from "remix-validated-form";
 import { withZod } from "@remix-validated-form/with-zod";
 import { getUserId } from "~/session.server";
 import { createNote } from "~/domain/note/note.server";
-import classNames from "classnames";
-import invariant from "tiny-invariant";
+import { NoteItem } from "~/domain/note/components";
+import { Button, FormInput, RadioInput } from "~/components/common";
 
 const validator = withZod(
   z.object({
@@ -92,59 +92,37 @@ export default function WordDetail() {
           </div>
           <div className="flex justify-between mt-2 items-center">
             <div className="flex gap-2 items-start">
-              <div className="bg-blue-200 text-blue-500 border border-blue-500 flex items-center gap-1 px-1 rounded-2xl">
-                <input
-                  defaultChecked
-                  id="kind-note"
-                  name="kind"
-                  value="note"
-                  type="radio"
-                />
-                <label className="cursor-pointer" htmlFor="kind-note">
-                  note
-                </label>
-              </div>
-              <div className="bg-yellow-200 text-yellow-500 border border-yellow-500 flex items-center gap-1 px-1 rounded-2xl">
-                <input id="kind-tips" name="kind" value="tips" type="radio" />
-                <label className="cursor-pointer" htmlFor="kind-tips">
-                  tips
-                </label>
-              </div>
-              <div className="bg-green-200 text-green-500 border border-green-500 flex items-center gap-1 px-1 rounded-2xl">
-                <input
-                  id="kind-notice"
-                  name="kind"
-                  value="notice"
-                  type="radio"
-                />
-                <label className="cursor-pointer" htmlFor="kind-notice">
-                  notice
-                </label>
-              </div>
+              <RadioInput
+                className="bg-blue-200 text-blue-500 border border-blue-500"
+                id="kind-note"
+                name="kind"
+                value="note"
+                defaultChecked
+              />
+              <RadioInput
+                className="bg-yellow-200 text-yellow-500 border border-yellow-500"
+                id="kind-tips"
+                name="kind"
+                value="tips"
+              />
+              <RadioInput
+                className="bg-green-200 text-green-500 border border-green-500"
+                name="kind"
+                id="kind-notice"
+                value="notice"
+              />
             </div>
             <Button type="submit">Post</Button>
           </div>
         </ValidatedForm>
         {!!word.notes.length && (
           <div className="py-4 flex flex-col gap-2">
-            {word.notes.map((note) => {
-              const noteClass = classNames("p-2", {
-                "bg-blue-100 text-blue-700 text-md border-2 border-blue-500 rounded-md":
-                  note.kind === "note",
-                "bg-yellow-100 text-yellow-700 text-md border-2 border-yellow-500 rounded-md":
-                  note.kind === "tips",
-                "bg-green-100 text-green-700 text-md border-2 border-green-500 rounded-md":
-                  note.kind === "notice",
-              });
-              return (
-                <div key={note.id} className={noteClass}>
-                  <div className="flex justify-between">
-                    <p>{note.body}</p>
-                    <Button onClick={onClickDeleteNote(note.id)}>delete</Button>
-                  </div>
-                </div>
-              );
-            })}
+            {word.notes.map((note) => (
+              <NoteItem
+                note={note as unknown as Note}
+                onDelete={onClickDeleteNote(note.id)}
+              />
+            ))}
           </div>
         )}
       </div>

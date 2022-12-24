@@ -1,13 +1,28 @@
 import type { ActionArgs, LoaderArgs, MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
-import * as React from "react";
+import { Link, useSearchParams } from "@remix-run/react";
+import { z } from "zod";
+import { withZod } from "@remix-validated-form/with-zod";
+import { ValidatedForm, validationError } from "remix-validated-form";
 
 import { getUserId, createUserSession } from "~/session.server";
 
 import { createUser, getUserByUsername } from "~/domain/user/user.server";
-import { safeRedirect, validateUsername } from "~/utils";
+import { safeRedirect } from "~/utils";
 import { Header } from "~/components/layout/Header";
+import { Button, FormInput } from "~/components/common";
+
+const validator = withZod(
+  z.object({
+    username: z
+      .string()
+      .min(8, { message: "username must be longer than 8 characters" }),
+    password: z
+      .string()
+      .min(8, { message: "password must be longer than 8 characters" }),
+    redirectTo: z.string(),
+  })
+);
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
@@ -16,31 +31,14 @@ export async function loader({ request }: LoaderArgs) {
 }
 
 export async function action({ request }: ActionArgs) {
-  const formData = await request.formData();
-  const username = formData.get("username");
-  const password = formData.get("password");
-  const redirectTo = safeRedirect(formData.get("redirectTo"), "/dashboard/word");
+  const data = await validator.validate(await request.formData());
+  if (data.error) return validationError(data.error);
 
-  if (!validateUsername(username)) {
-    return json(
-      { errors: { username: "username is invalid", password: null } },
-      { status: 400 }
-    );
-  }
+  const {
+    data: { username, password },
+  } = data;
 
-  if (typeof password !== "string" || password.length === 0) {
-    return json(
-      { errors: { username: null, password: "Password is required" } },
-      { status: 400 }
-    );
-  }
-
-  if (password.length < 8) {
-    return json(
-      { errors: { username: null, password: "Password is too short" } },
-      { status: 400 }
-    );
-  }
+  const redirectTo = safeRedirect(data.data.redirectTo, "/dashboard/word");
 
   const existingUser = await getUserByUsername(username);
   if (existingUser) {
@@ -48,8 +46,8 @@ export async function action({ request }: ActionArgs) {
       {
         errors: {
           username: "A user already exists with this username",
-          password: null
-        }
+          password: null,
+        },
       },
       { status: 400 }
     );
@@ -61,93 +59,50 @@ export async function action({ request }: ActionArgs) {
     request,
     userId: user.id,
     remember: false,
-    redirectTo
+    redirectTo,
   });
 }
 
 export const meta: MetaFunction = () => {
   return {
-    title: "Sign Up"
+    title: "Sign Up",
   };
 };
 
 export default function Join() {
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get("redirectTo") ?? undefined;
-  const actionData = useActionData<typeof action>();
-  const usernameRef = React.useRef<HTMLInputElement>(null);
-  const passwordRef = React.useRef<HTMLInputElement>(null);
-
-  React.useEffect(() => {
-    if (actionData?.errors?.username) {
-      usernameRef.current?.focus();
-    } else if (actionData?.errors?.password) {
-      passwordRef.current?.focus();
-    }
-  }, [actionData]);
 
   return (
     <>
       <Header />
       <div className="p-4">
-        <Form method="post">
-          <div>
-            <label htmlFor="username">username</label>
-            <div className="mt-1">
-              <input
-                ref={usernameRef}
-                id="username"
-                required
-                autoFocus={true}
-                name="username"
-                type="username"
-                autoComplete="username"
-                aria-invalid={actionData?.errors?.username ? true : undefined}
-                aria-describedby="username-error"
-              />
-              {actionData?.errors?.username && (
-                <div className="pt-1 text-red-700" id="username-error">
-                  {actionData.errors.username}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div>
-            <label htmlFor="password">Password</label>
-            <div className="mt-1">
-              <input
-                id="password"
-                ref={passwordRef}
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                aria-invalid={actionData?.errors?.password ? true : undefined}
-                aria-describedby="password-error"
-              />
-              {actionData?.errors?.password && (
-                <div id="password-error">{actionData.errors.password}</div>
-              )}
-            </div>
+        <ValidatedForm
+          className="bg-blue-100 p-2 rounded-sm w-1/4"
+          method="post"
+          validator={validator}
+        >
+          <div className="flex flex-col gap-2">
+            <FormInput name="username" />
+            <FormInput name="password" type="password" />
           </div>
           <input type="hidden" name="redirectTo" value={redirectTo} />
-          <button className="px-2 py-1 bg-blue-500 text-neutral-50 mt-2 rounded-md text-sm" type="submit">Create Account
-          </button>
-          <div>
-            <div>
-              Already have an account?{" "}
-              <Link
-                className="text-blue-900 underline"
-                to={{
-                  pathname: "/",
-                  search: searchParams.toString()
-                }}
-              >
-                Log in
-              </Link>
-            </div>
+          <div className="mt-2 flex justify-end gap-2">
+            <Button>Create Account</Button>
           </div>
-        </Form>
+          <div className="text-sm mt-2 flex justify-center gap-1">
+            <p>Already have an account?</p>
+            <Link
+              className="text-blue-900 underline"
+              to={{
+                pathname: "/",
+                search: searchParams.toString(),
+              }}
+            >
+              Log in
+            </Link>
+          </div>
+        </ValidatedForm>
       </div>
     </>
   );
