@@ -38,7 +38,7 @@ export const getWordsByUserId = async (
   });
 };
 
-export const updateWord = async (word: Word): Promise<Word | null> => {
+export const updateWord = async (word: Partial<Word>): Promise<Word | null> => {
   const { id, title, description, updatedBy } = word;
   return prisma.word.update({
     where: {

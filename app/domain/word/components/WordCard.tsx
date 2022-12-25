@@ -1,6 +1,7 @@
 import { FC } from "react";
 import { Word } from "@prisma/client";
 import { Button } from "~/components/common";
+import { Link } from "@remix-run/react";
 
 type WordCardProps = {
   word: Word;
@@ -21,7 +22,10 @@ export const WordCard: FC<WordCardProps> = (props) => {
       </a>
       <div className="p-2 text-blue-500">
         <p>{word.description}</p>
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-1">
+          <Link to={`/edit/word/${word.id}`}>
+            <Button>Edit</Button>
+          </Link>
           <Button onClick={onDelete}>delete</Button>
         </div>
       </div>

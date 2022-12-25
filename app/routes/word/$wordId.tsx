@@ -119,6 +119,7 @@ export default function WordDetail() {
           <div className="py-4 flex flex-col gap-2">
             {word.notes.map((note) => (
               <NoteItem
+                key={note.id}
                 note={note as unknown as Note}
                 onDelete={onClickDeleteNote(note.id)}
               />

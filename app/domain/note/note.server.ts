@@ -20,15 +20,14 @@ export const getNoteById = async (noteId: Note["id"]): Promise<Note | null> => {
   });
 };
 
-export const updateNote = async (note: Note): Promise<Note | null> => {
-  const { id, body, updatedBy } = note;
+export const updateNote = async (note: Partial<Note>): Promise<Note | null> => {
+  const { id } = note;
   return prisma.note.update({
     where: {
       id,
     },
     data: {
-      body,
-      updatedBy,
+      ...note,
     },
   });
 };
