@@ -59,6 +59,7 @@ export default function WordView() {
             <>
               {words.map((word) => (
                 <WordCard
+                  key={word.id}
                   word={word}
                   onClick={onClickWordCard(word.id)}
                   onDelete={onClickDeleteWord(word.id)}
