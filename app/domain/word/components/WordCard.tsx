@@ -2,6 +2,7 @@ import { FC } from "react";
 import { Word } from "@prisma/client";
 import { Button } from "~/components/common";
 import { Link } from "@remix-run/react";
+import { IconEdit, IconTrashX } from "@tabler/icons";
 
 type WordCardProps = {
   word: Word;
@@ -23,10 +24,14 @@ export const WordCard: FC<WordCardProps> = (props) => {
       <div className="p-2 text-blue-500">
         <p>{word.description}</p>
         <div className="flex justify-end gap-1">
-          <Link to={`/edit/word/${word.id}`}>
-            <Button>Edit</Button>
-          </Link>
-          <Button onClick={onDelete}>delete</Button>
+          <Button>
+            <Link to={`/edit/word/${word.id}`}>
+              <IconEdit size={16} />
+            </Link>
+          </Button>
+          <Button className="text-neutral-50 bg-red-400" onClick={onDelete}>
+            <IconTrashX size={16} />
+          </Button>
         </div>
       </div>
     </div>

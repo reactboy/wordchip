@@ -5,6 +5,7 @@ import { Button, FormInput } from "~/components/common";
 import { ValidatedForm } from "remix-validated-form";
 import { withZod } from "@remix-validated-form/with-zod";
 import { z } from "zod";
+import { IconTrashX, IconEdit, IconBackspace, IconSend } from "@tabler/icons";
 
 export const validator = withZod(
   z.object({
@@ -68,15 +69,15 @@ export const NoteItem: FC<NoteItemProps> = (props) => {
             defaultValue={note.body}
             className={inputClass}
           />
-          <div className="flex gap-1">
+          <div className="flex gap-1 items-center">
             <Button className={buttonClass} type="submit">
-              update
+              <IconSend size={16} />
             </Button>
             <Button
               className="text-neutral-50 bg-red-400"
               onClick={onClickEdit}
             >
-              cancel
+              <IconBackspace size={16} />
             </Button>
           </div>
         </ValidatedForm>
@@ -85,10 +86,10 @@ export const NoteItem: FC<NoteItemProps> = (props) => {
           <p>{note.body}</p>
           <div className="flex gap-1">
             <Button className={buttonClass} onClick={onClickEdit}>
-              edit
+              <IconEdit size={16} />
             </Button>
             <Button className="text-neutral-50 bg-red-400" onClick={onDelete}>
-              delete
+              <IconTrashX size={16} />
             </Button>
           </div>
         </div>
